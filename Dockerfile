@@ -133,13 +133,12 @@ RUN pip3 install -U pip \
 # User management
 RUN groupadd -g 1000 aesd && \
     useradd -u 1000 -g 1000 -ms /bin/bash aesd && \
-    usermod -a -G aesd && \
     usermod -a -G users aesd && \
-    mkdir /home/aesd && \
+    mkdir -p /home/aesd && \
     chown -R aesd:aesd /home/aesd
-RUN groupadd docker && \
-    usermod -a -G docker aesd && \
-    su -i aesd
+# RUN groupadd docker && \
+#     usermod -a -G docker aesd && \
+#     su -i aesd
 RUN rm /bin/sh && ln -s bash /bin/sh
 RUN install -o 1000 -g 1000 -d /home/aesd
 
@@ -149,15 +148,15 @@ RUN locale-gen en_US.UTF-8
 ENV LANG en_us.UTF-8
 ENV LC_ALL en_US.UTF-8
 RUN update-locale
-COPY ./bashrc /home/aesd/.bashrc
+COPY ./.bashrc /home/aesd/.bashrc
 RUN sysctl fs.inotify.max_user_watches=65536
 WORKDIR /home/aesd
 USER aesd
 
-# Clean up a bit
-RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+# # Clean up a bit
+# RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Begin the Yocto Build for Jetson Image
 COPY tegra_builder.sh .
-RUN chmod a+x tegra_builder.sh
+# RUN chmod a+x tegra_builder.sh
 CMD [ "bash", "-c", "./tegra_builder.sh" ]
