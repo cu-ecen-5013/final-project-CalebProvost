@@ -67,29 +67,28 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
     libbz2-dev
 
 # Docker
-RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
-    gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-RUN add-apt-repository "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] \
-    https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+# RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+#     gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+# RUN add-apt-repository "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 
-# nVidia Docker Container
-RUN distribution=$(. /etc/os-release;echo $ID$VERSION_ID) && \
-    curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | apt-key add - && \
-    curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | && \
-    tee /etc/apt/sources.list.d/nvidia-docker.list
+# # nVidia Docker Container
+# RUN distribution=$(. /etc/os-release;echo $ID$VERSION_ID) && \
+#     curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | apt-key add - && \
+#     curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | && \
+#     tee /etc/apt/sources.list.d/nvidia-docker.list
 
-RUN apt-get update && apt-get install -y \
-    nvidia-docker2 && \
-    nvidia-container-toolkit && \
-    systemctl restart docker
+# RUN apt-get update && apt-get install -y \
+#     nvidia-docker2 && \
+#     nvidia-container-toolkit && \
+#     systemctl restart docker
 
-# RUN curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh
-# COPY get-docker.sh .
-# RUN sh get-docker.sh && systemctl --now enable docker
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    docker-ce \
-    docker-ce-cli \
-    containerd.io
+# # RUN curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh
+# # COPY get-docker.sh .
+# # RUN sh get-docker.sh && systemctl --now enable docker
+# RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
+#     docker-ce \
+#     docker-ce-cli \
+#     containerd.io
 
 # Utilities
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
@@ -106,8 +105,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
     socat \
     xz-utils  \
     locales \
-    fluxbox \
-    colcon-core
+    fluxbox
 
 # Python Packages
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
@@ -129,6 +127,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
 
 # Upgrade Python's package installer
 RUN pip3 install -U pip \
+    -U colcon-core \
     -U colcon-common-extensions
 
 # User management
