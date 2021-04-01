@@ -45,3 +45,7 @@ Note: The following example maps the build output directory to the directory whe
 ```bash
 docker run -it --rm -v $PWD:/home/aesd/ yocto-tegra:spring21
 ```
+
+## To Do
+
+Provide Flash Tool instructions.

@@ -3,13 +3,14 @@ FROM ubuntu:18.04
 
 # Default end result image and target, can be overwritten with `docker build`
 ARG MACHINE="jetson-nano-2gb-devkit"
-ARG BRANCH="gatesgarth"
-ARG DISTRO="tegrademo-mender build-tegrademo-mender"
+ARG BRANCH="c4ef10f44d92ac9f1e4725178ab0cefd9add8126"
+ARG DISTRO="tegrademo"
 ARG BUILD_IMAGE="demo-image-full"
 
 # Install build system's dependencies
-RUN apt-get update 
+RUN apt-get update
 RUN apt-get -y upgrade
+
 # Remote Utilities
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
     apt-utils \
@@ -26,7 +27,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
     tightvncserver \
     apt-transport-https \
     ca-certificates \
-    curl
+    gpg \
+    curl lsb-release
 
 # Build Tools
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
@@ -60,37 +62,19 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
     libbenchmark-dev \
     libspdlog-dev \
     liblog4cxx-dev \
-    libcunit1-dev
+    libcunit1-dev \
+    libbz2-dev
 
 # Docker
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 RUN echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] \
     https://download.docker.com/linux/ubuntu \
     $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-# RUN curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh
+RUN curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
     docker-ce \
     docker-ce-cli \
     containerd.io
-
-# Python Packages
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    python \
-    python3 \
-    python-rosdep \
-    python3-pip \
-    python3-pexpect \
-    python3-git \
-    python3-jinja2 \
-    python3-colcon-common-extensions \
-    python3-vcstool \
-    python3-babeltrace \
-    python3-pygraphviz \
-    python3-mock \
-    python3-nose \
-    python3-mypy \
-    python3-pytest-mock \
-    python3-lttng
 
 # Nvidia and other Utilities
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
@@ -109,10 +93,30 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
     socat \
     xz-utils  \
     locales \
-    fluxbox
+    fluxbox \
+    colcon-core
+
+# Python Packages
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    python \
+    python3 \
+    python-rosdep \
+    python3-pip \
+    python3-pexpect \
+    python3-git \
+    python3-jinja2 \
+    python3-vcstools \
+    python3-babeltrace \
+    python3-pygraphviz \
+    python3-mock \
+    python3-nose \
+    python3-mypy \
+    python3-pytest-mock \
+    python3-lttng
 
 # Upgrade Python's package installer
-RUN pip3 install -U pip
+RUN pip3 install -U pip -U \
+    colcon-common-extensions
 
 ### Setup Build Environment ###
 # User management

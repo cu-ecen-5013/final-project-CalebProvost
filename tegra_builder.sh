@@ -2,8 +2,8 @@
 
 # Set output directory to yocto_build if WORKDIR isn't set
 [ -z "${MACHINE}" ] && MACHINE="jetson-nano-2gb-devkit"
-[ -z "${BRANCH}" ] && BRANCH="gatesgarth"
-[ -z "${DISTRO}" ] && DISTRO="tegrademo-mender build-tegrademo-mender"
+[ -z "${BRANCH}" ] && BRANCH="c4ef10f44d92ac9f1e4725178ab0cefd9add8126"
+[ -z "${DISTRO}" ] && DISTRO="tegrademo"
 [ -z "${BUILD_IMAGE}" ] && BUILD_IMAGE="demo-image-full"
 
 # git clone https://github.com/OE4T/meta-tegra.git
