@@ -6,6 +6,7 @@ ARG MACHINE="jetson-nano-2gb-devkit"
 ARG BRANCH="c4ef10f44d92ac9f1e4725178ab0cefd9add8126"
 ARG DISTRO="tegrademo"
 ARG BUILD_IMAGE="demo-image-full"
+ARG NVIDIA_DEVNET_MIRROR="file:///home/aesd/cuda_bins"
 
 # Install build system's dependencies
 RUN apt-get update
@@ -147,6 +148,7 @@ RUN dpkg-reconfigure locales
 RUN locale-gen en_US.UTF-8
 ENV LANG en_us.UTF-8
 ENV LC_ALL en_US.UTF-8
+ENV NVIDIA_DEVNET_MIRROR "file:///home/aesd/cuda_bins"
 RUN update-locale
 COPY ./.bashrc /home/aesd/.bashrc
 RUN sysctl fs.inotify.max_user_watches=65536
