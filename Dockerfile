@@ -14,6 +14,7 @@ RUN apt-get -y upgrade
 # Remote Utilities
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
     apt-utils \
+    software-properties-common \
     gawk \
     git \
     wget \
@@ -66,24 +67,36 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
     libbz2-dev
 
 # Docker
-RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-RUN echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] \
-    https://download.docker.com/linux/ubuntu \
-    $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-RUN curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+    gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+RUN add-apt-repository "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] \
+    https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+# nVidia Docker Container
+RUN distribution=$(. /etc/os-release;echo $ID$VERSION_ID) && \
+    curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | apt-key add - && \
+    curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | && \
+    tee /etc/apt/sources.list.d/nvidia-docker.list
+
+RUN apt-get update && apt-get install -y \
+    nvidia-docker2 && \
+    nvidia-container-toolkit && \
+    systemctl restart docker
+
+# RUN curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh
+# COPY get-docker.sh .
+# RUN sh get-docker.sh && systemctl --now enable docker
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
     docker-ce \
     docker-ce-cli \
     containerd.io
 
-# Nvidia and other Utilities
+# Utilities
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
     dkms \
     iputils-ping  \
     mesa-utils \
     debianutils \
-    libnvidia-container1 \
-    libnvidia-container-tools \
     pylint3 \
     xterm \
     unzip \
@@ -115,17 +128,19 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
     python3-lttng
 
 # Upgrade Python's package installer
-RUN pip3 install -U pip -U \
-    colcon-common-extensions
+RUN pip3 install -U pip \
+    -U colcon-common-extensions
 
-### Setup Build Environment ###
 # User management
 RUN groupadd -g 1000 aesd && \
     useradd -u 1000 -g 1000 -ms /bin/bash aesd && \
-    usermod -a -G sudo aesd && \
+    usermod -a -G aesd && \
     usermod -a -G users aesd && \
     mkdir /home/aesd && \
     chown -R aesd:aesd /home/aesd
+RUN groupadd docker && \
+    usermod -a -G docker aesd && \
+    su -i aesd
 RUN rm /bin/sh && ln -s bash /bin/sh
 RUN install -o 1000 -g 1000 -d /home/aesd
 
@@ -136,7 +151,7 @@ ENV LANG en_us.UTF-8
 ENV LC_ALL en_US.UTF-8
 RUN update-locale
 COPY ./bashrc /home/aesd/.bashrc
-RUN sudo sysctl fs.inotify.max_user_watches=65536
+RUN sysctl fs.inotify.max_user_watches=65536
 WORKDIR /home/aesd
 USER aesd
 
