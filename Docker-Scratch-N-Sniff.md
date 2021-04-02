@@ -1,7 +1,18 @@
 
 # From Scratch  
 
-**<sub>Ubuntu 18.04 on x86_64 system used as Host/Build system. Others not tested.</sub>**  
+## Important Preamble
+
+Ubuntu 18.04 on x86_64 system used as Host/Build system. Others not tested.  
+As of the date of writing, version 4.3 does not support the 2GB version.  
+A clarification as provided by nVidia:  
+> A Jetson Nano 2GB Developer Kit includes a non-production specification Jetson module (P3448-0003) attached to a reference carrier board (P3542-0000).  
+> This user guide covers two revisions of the developer kit:  
+>
+> * Part Number 945-13541-0000-000 including 802.11ac wireless adapter and cable  
+> * Part Number 945-13541-0001-000 NOT including adapter and cable  
+
+We are targeting to build for the module, which means the default was set to `P3448-0003`.  
 
 ## Install Docker  
 
@@ -56,9 +67,8 @@ Most importantly, create a new group called docker and add your username to it. 
     sudo systemctl restart docker
     ```
 
-## Build Docker Image
+## Build the Dockerized Yocto for Tegra
 
----
 Run the following for the default configuration:  
 `docker build -t yocto-tegra:spring21 .`  
 
@@ -99,7 +109,7 @@ docker run -it --rm --privileged -v /dev/bus/usb:/dev/bus/usb -v $PWD:/home/aesd
 
 We are targeting to build for the module, which means we use `P3448-0003` during our target selection.   -->
 
-## Run the Docker Container  
+## Run the Docker Container to Build L4T Image  
 
 Note: The following example maps the build output directory to the directory where this Dockerfile is executed  
 
