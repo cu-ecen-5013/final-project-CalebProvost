@@ -4,6 +4,7 @@
 **<sub>Ubuntu 18.04 on x86_64 system used as Host/Build system. Others not tested.</sub>**  
 
 ## Install Docker  
+
 ---
 See the latest installation method for your distro from Docker's website.  
 The following was used to install on the **_host_** build system:  
@@ -17,8 +18,8 @@ The following was used to install on the **_host_** build system:
 * Add Docker Keys  
 
     ```shell
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
-    gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg`
+    sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+    sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg`
     ```
 
 * Add Docker's repository to the package manager
@@ -34,33 +35,35 @@ The following was used to install on the **_host_** build system:
     sudo apt-get install docker.io
     ```
 
-* Follow the [post-install steps for Docker](https://docs.docker.com/engine/install/linux-postinstall/)  
+* Follow the [post-install steps for Docker](https://docs.docker.com/engine/install/linux-postinstall/). </br>
+Most importantly, create a new group called docker and add your username to it. **Changes take affect upon logging in again (reboot)**: </br>
+`sudo usermod -aG docker $USER && newgrp docker && su -l $USER`  
 
-Optional:
-If you'd like to change the docker storage location to an external device, feel free to do the following:
+**_Optional_:** If you'd like to change the docker storage location to an external device, feel free to do the following:  
 
-Edit /etc/docker/daemon.json (if it doesn’t exist, create it) and include:
+* Edit /etc/docker/daemon.json (if it doesn’t exist, create it) and include:
 
-```json
-{
-  "data-root": "/new/path/to/docker-data"
-}
-```
+    ```json
+    {
+    "data-root": "/new/path/to/docker-data"
+    }
+    ```
 
-Then restart Docker with:
+* Then restart Docker with:
 
-```bash
-sudo systemctl daemon-reload
-sudo systemctl restart docker
-```
+    ```bash
+    sudo systemctl daemon-reload
+    sudo systemctl restart docker
+    ```
 
 ## Build Docker Image
+
 ---
 Run the following for the default configuration:  
 `docker build -t yocto-tegra:spring21 .`  
 
-Note: If you'd like to override the default branch, machine, and target distro you can do so by appending their new values with the argument tag `--build-arg VAR=value` like the example provided below. For the list of defaults which can be overwritten, see `tegra_builder.sh`.  
-<sub>Note: Executing the `tegra_builder.sh` outside of the Docker container will fail. To build the Tegra image, proceed to [Run the Docker Container](#Run-the-Docker-Container).</sub>  
+Note: If you'd like to override the default branch, machine, and target distro you can do so by appending their new values with the argument tag `--build-arg VAR=value` like the example provided below. For the list of defaults which can be overwritten, see `tegra_install_n_build.sh`.  
+<sub>Note: Executing the `tegra_install_n_build.sh` outside of the Docker container will fail. To build the Tegra image, proceed to [Run the Docker Container](#Run-the-Docker-Container).</sub>  
 
 ```shell
 docker build -t yocto-tegra:spring21 --build-arg MACHINE=jetson-nano-2gb-devkit \
@@ -68,11 +71,22 @@ docker build -t yocto-tegra:spring21 --build-arg MACHINE=jetson-nano-2gb-devkit 
         --build-arg DISTRO="tegrademo-mender build-tegrademo-mender" \
 ```
 
+<!-- 
 ## Install the SDK
 
-Install the included .deb:  
-
+Install the included SDK through the newly created Docker instance:  
 `sudo apt-get install -y ./sdkmanager_1.4.1-7402_amd64.deb`
+
+Upon running the follow command, you will be given a link to follow for you to log into your nVidia account and afirm permissions to install. Adjust the variables to meet your environment/target's needs.  
+
+```shell
+docker run -it --rm --privileged -v /dev/bus/usb:/dev/bus/usb -v $PWD:/home/aesd/ \
+    --name yl4t yocto-tegra:spring21 sdkmanager --cli install --staylogin true \
+    --product Jetson --version 4.5.1 --targetos Linux --host true --target P3448-0003 \
+    --flash skip --additionalsdk TensorFlow --select "Jetson OS" --select "Jetson SDK Components" \
+    --license accept --datacollection disable --downloadfolder /media/aesd/yocto/sdk_downloads \
+    --targetimagefolder /media/aesd/yocto/nvidia/nvidia_sdk/
+```
 
 <sub>Note: As of the date of writing, version 4.3 does not support the 2GB version listed above. Prior 4GB models may have success; our 2GB models did no.</sub>
 
@@ -83,15 +97,13 @@ Install the included .deb:
 > * Part Number 945-13541-0000-000 including 802.11ac wireless adapter and cable  
 > * Part Number 945-13541-0001-000 NOT including adapter and cable  
 
-We are targeting to build for the module, which means we use `P3448-0003` during our target selection.  
+We are targeting to build for the module, which means we use `P3448-0003` during our target selection.   -->
 
 ## Run the Docker Container  
 
 Note: The following example maps the build output directory to the directory where this Dockerfile is executed  
 
-```shell
-docker run -it --rm -v $PWD:/home/aesd/ yocto-tegra:spring21
-```
+`docker run -it --rm -v $PWD:/home/aesd/ --name yl4t yocto-tegra:spring21`
 
 ## To Do
 
