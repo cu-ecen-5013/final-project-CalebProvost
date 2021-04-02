@@ -111,6 +111,8 @@ We are targeting to build for the module, which means we use `P3448-0003` during
 
 ## Run the Docker Container to Build L4T Image  
 
+Start the Docker container with the command below and it will kick off an installation of nVidia's SDK and build the L4T yocto image.  
+You will be prompted to follow the link and log into the nVidia developer's account which will then validate the install.  
 Note: The following example maps the build output directory to the directory where this Dockerfile is executed  
 
 `docker run -it --rm -v $PWD:/home/aesd/ --name yl4t yocto-tegra:spring21`
