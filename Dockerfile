@@ -67,17 +67,21 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
     libcunit1-dev \
     libbz2-dev
 
-# Docker
-# RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
-#     gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-# RUN add-apt-repository "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+# Docker Dependencies for nVidia SDK Install
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+    gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+RUN echo \
+  "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-# # nVidia Docker Container
+# # nVidia SDK
 # RUN distribution=$(. /etc/os-release;echo $ID$VERSION_ID) && \
 #     curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | apt-key add - && \
 #     curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | && \
 #     tee /etc/apt/sources.list.d/nvidia-docker.list
 
+COPY ./sdkmanager_1.4.1-7402_amd64.deb ./
+RUN apt-get update && apt-get install -y ./sdkmanager_1.4.1-7402_amd64.deb
 # RUN apt-get update && apt-get install -y \
 #     nvidia-docker2 && \
 #     nvidia-container-toolkit && \
@@ -86,10 +90,12 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
 # # RUN curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh
 # # COPY get-docker.sh .
 # # RUN sh get-docker.sh && systemctl --now enable docker
-# RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
-#     docker-ce \
-#     docker-ce-cli \
-#     containerd.io
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    docker-ce \
+    docker-ce-cli \
+    containerd.io
+
+# nVidia SDK
 
 # Utilities
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
@@ -158,7 +164,8 @@ USER aesd
 # # Clean up a bit
 # RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Begin the Yocto Build for Jetson Image
+# Script to Begin the Yocto Build for Jetson Image
 COPY tegra_builder.sh .
 # RUN chmod a+x tegra_builder.sh
-CMD [ "bash", "-c", "./tegra_builder.sh" ]
+# CMD [ "bash", "-c", "./tegra_builder.sh" ]
+CMD [ "bash" ]
