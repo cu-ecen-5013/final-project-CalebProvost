@@ -1,5 +1,9 @@
-
 # From Scratch  
+
+Its as easy as [building the docker image](#Build-the-Dockerized-Yocto-for-Jetson), [having docker build L4T](#Run-the-Docker-Container-to-Build-L4T-Image), and [flashing the SD Card](#Flash-the-SD-Card)!  
+<sub>With the caviot that **_maybe_** you'll need to [install docker](#Install-Docker) if you don't already have it</sub>  
+
+---
 
 ## Important Preamble
 
@@ -13,6 +17,8 @@ A clarification as provided by nVidia:
 > * Part Number 945-13541-0001-000 NOT including adapter and cable  
 
 We are targeting to build for the module, which means the default was set to `P3448-0003`.  
+
+---
 
 ## Install Docker  
 
@@ -67,47 +73,20 @@ Most importantly, create a new group called docker and add your username to it. 
     sudo systemctl restart docker
     ```
 
-## Build the Dockerized Yocto for Tegra
+## Build the Dockerized Yocto for Jetson
 
-Run the following for the default configuration:  
+<sub>**Info:** Executing the `tegra_install_n_build.sh` outside of the Docker container will fail. It is a script which runs automatically by and inside the docker container itself.</sub>  
+
+* Run the following to build the docker image with the default configuration:  
 `docker build -t yocto-tegra:spring21 .`  
 
-Note: If you'd like to override the default branch, machine, and target distro you can do so by appending their new values with the argument tag `--build-arg VAR=value` like the example provided below. For the list of defaults which can be overwritten, see `tegra_install_n_build.sh`.  
-<sub>Note: Executing the `tegra_install_n_build.sh` outside of the Docker container will fail. To build the Tegra image, proceed to [Run the Docker Container](#Run-the-Docker-Container).</sub>  
+    If you'd like to override the default branch, machine, target distro, or other settings, you can do so by overwriting their values with the argument tag `--build-arg VAR=value`. Below is an example provided to demonstrate this. See the header inside `tegra_install_n_build.sh` for defaults and overwritable variables.  
 
-```shell
-docker build -t yocto-tegra:spring21 --build-arg MACHINE=jetson-nano-2gb-devkit \
-        --build-arg BRANCH=master --build-arg BUILD_IMAGE=demo-image-full \
-        --build-arg DISTRO="tegrademo-mender build-tegrademo-mender" \
-```
-
-<!-- 
-## Install the SDK
-
-Install the included SDK through the newly created Docker instance:  
-`sudo apt-get install -y ./sdkmanager_1.4.1-7402_amd64.deb`
-
-Upon running the follow command, you will be given a link to follow for you to log into your nVidia account and afirm permissions to install. Adjust the variables to meet your environment/target's needs.  
-
-```shell
-docker run -it --rm --privileged -v /dev/bus/usb:/dev/bus/usb -v $PWD:/home/aesd/ \
-    --name yl4t yocto-tegra:spring21 sdkmanager --cli install --staylogin true \
-    --product Jetson --version 4.5.1 --targetos Linux --host true --target P3448-0003 \
-    --flash skip --additionalsdk TensorFlow --select "Jetson OS" --select "Jetson SDK Components" \
-    --license accept --datacollection disable --downloadfolder /media/aesd/yocto/sdk_downloads \
-    --targetimagefolder /media/aesd/yocto/nvidia/nvidia_sdk/
-```
-
-<sub>Note: As of the date of writing, version 4.3 does not support the 2GB version listed above. Prior 4GB models may have success; our 2GB models did no.</sub>
-
-**! Important clarification as provided by nVidia:**
-> A Jetson Nano 2GB Developer Kit includes a non-production specification Jetson module (P3448-0003) attached to a reference carrier board (P3542-0000).  
-> This user guide covers two revisions of the developer kit:  
->
-> * Part Number 945-13541-0000-000 including 802.11ac wireless adapter and cable  
-> * Part Number 945-13541-0001-000 NOT including adapter and cable  
-
-We are targeting to build for the module, which means we use `P3448-0003` during our target selection.   -->
+    ```shell
+    docker build -t yocto-tegra:spring21 --build-arg MACHINE=jetson-nano-2gb-devkit \
+            --build-arg BRANCH=master --build-arg BUILD_IMAGE=demo-image-full \
+            --build-arg DISTRO="tegrademo-mender build-tegrademo-mender" \
+    ```
 
 ## Run the Docker Container to Build L4T Image  
 
@@ -117,6 +96,12 @@ Note: The following example maps the build output directory to the directory whe
 
 `docker run -it --rm -v $PWD:/home/aesd/ --name yl4t yocto-tegra:spring21`
 
-## To Do
+<sub>**Hint:** You can remove the `--rm` flag from the above command to keep the container instance once it's complete and attach to it for your own modifications/build edits</sub>
 
-Provide Flash Tool instructions.
+## Flash the SD Card
+
+The SD Card image is created using the L4T SD Card tools and placed in the root of this directory. It's default name will be "demo-image-full-jetson-nano-2gb-devkit.img" but will follow the following naming convention if the defaults were overwritten in the prior steps: `"${BUILD_IMAGE}-${MACHINE}.img"`  
+
+Use your flavor of SD Card flashing tool (like balenaEtcher for Windows or `dd` for linux) and flash the provided image onto an SD card and insert into the Jetson nano to start having fun.  
+
+Note: An SD Card sized ~16GB will be needed. We found that our image was 300MB too large and thus used a 32GB card instead.  
