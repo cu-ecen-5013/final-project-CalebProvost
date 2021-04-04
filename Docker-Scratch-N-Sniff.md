@@ -94,7 +94,7 @@ Start the Docker container with the command below and it will kick off an instal
 You will be prompted to follow the link and log into the nVidia developer's account which will then validate the install.  
 Note: The following example maps the build output directory to the directory where this Dockerfile is executed  
 
-`docker run -it --rm -v $PWD:/home/aesd/ --name yl4t yocto-tegra:spring21`
+`docker run -it --rm -v $PWD:/home/aesd/ --name dl4t yocto-tegra:spring21`
 
 <sub>**Hint:** You can remove the `--rm` flag from the above command to keep the container instance once it's complete and attach to it for your own modifications/build edits</sub>
 

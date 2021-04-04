@@ -15,16 +15,16 @@ sdkmanager --cli install --staylogin true --product Jetson --version 4.5.1 \
     --license accept --datacollection disable --downloadfolder /home/aesd/sdk_downloads \
     --targetimagefolder /home/aesd/nvidia/nvidia_sdk/ --sudopassword '\n'
 
-YL4T_SUCCESS="false"
+DL4T_SUCCESS="false"
 # git clone https://github.com/OE4T/meta-tegra.git
 git clone https://github.com/OE4T/tegra-demo-distro.git /home/aesd/tegra-demo-distro
 cd /home/aesd/tegra-demo-distro/ || exit 1
 git checkout ${BRANCH}
 git submodule update --init --recursive
 . ./setup-env --machine ${MACHINE} --distro ${DISTRO}
-bitbake ${BUILD_IMAGE} && export YL4T_SUCCESS="true"
+bitbake ${BUILD_IMAGE} && export DL4T_SUCCESS="true"
 
-if [ "${YL4T_SUCCESS}" = "true" ]; then
+if [ "${DL4T_SUCCESS}" = "true" ]; then
     echo "Yocto Build of L4T Complete. Preping Image to flash to SD Card."
     mkdir -p /home/aesd/tegraflash
     cd /home/aesd/tegraflash || echo "Could not enter staging directory" && exit 1
