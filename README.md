@@ -1,14 +1,15 @@
-# ECEN 5713 AESD Sp `21 Course Project Repository 
----
+# ECEN 5713 AESD Sp `21 Course Project Repository
 
-### Repository Owner - Caleb Provost  
-Contains copy of course project code source
+### **Repository Owner - Caleb Provost**
 
-## Repository Overview 
-- [Final Project Overview Page](https://AESD-Course-Project.github.io)
+Contains Docker Code and Yocto Layer
 
-### TEAM MEMBERS 
-- [Arpit Savarkar](https://github.com/cu-ecen-5013/final-project-arpit6232) 
-- [Caleb Provost](https://github.com/CalebProvost) 
-- [Zach Turner](https://github.com/cu-ecen-5013/final-project-ZachTurner07) 
+## Repository Overview
 
+- [Final Project Overview Page](https://AESD-Course-Project.github.io)  
+
+### TEAM MEMBERS
+
+- [Arpit Savarkar](https://github.com/cu-ecen-5013/final-project-arpit6232)  
+- [Caleb Provost](https://github.com/CalebProvost)  
+- [Zach Turner](https://github.com/cu-ecen-5013/final-project-ZachTurner07)  
