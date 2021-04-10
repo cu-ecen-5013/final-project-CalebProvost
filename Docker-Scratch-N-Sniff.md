@@ -33,7 +33,7 @@ The following was used to install on the **_host_** build system:
 
     ```shell
     sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
-    sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg`
+    sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
     ```
 
 * Add Docker's repository to the package manager

@@ -17,8 +17,9 @@ sdkmanager --cli install --staylogin true --product Jetson --version 4.5.1 \
 
 # Clone L4T Yocto Base
 YL4T_SUCCESS="false"
-git clone https://github.com/OE4T/tegra-demo-distro.git ${CUR_DIR}/tegra-demo-distro --branch ${BRANCH}
+git clone https://github.com/OE4T/tegra-demo-distro.git ${CUR_DIR}/tegra-demo-distro
 cd "${CUR_DIR}/tegra-demo-distro/" || echo "Could not enter L4T directory"
+git checkout ${BRANCH}
 git submodule update --init --recursive
 
 # Clone AESD Final Project Layer & add it to L4T layer
