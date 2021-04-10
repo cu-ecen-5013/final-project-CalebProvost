@@ -78,14 +78,15 @@ Most importantly, create a new group called docker and add your username to it. 
 <sub>**Info:** Executing the `tegra_install_n_build.sh` outside of the Docker container will fail. It is a script which runs automatically by and inside the docker container itself.</sub>  
 
 * Run the following to build the docker image with the default configuration:  
-`docker build -t yocto-tegra:spring21 .`  
+`docker build -t aesd-final:spring21 .`  
 
     If you'd like to override the default branch, machine, target distro, or other settings, you can do so by overwriting their values with the argument tag `--build-arg VAR=value`. Below is an example provided to demonstrate this. See the header inside `tegra_install_n_build.sh` for defaults and overwritable variables.  
 
     ```shell
-    docker build -t yocto-tegra:spring21 --build-arg MACHINE=jetson-nano-2gb-devkit \
+    docker build -t aesd-final:spring21 --build-arg MACHINE=jetson-nano-2gb-devkit \
             --build-arg BRANCH=master --build-arg BUILD_IMAGE=demo-image-full \
             --build-arg DISTRO="tegrademo-mender build-tegrademo-mender" \
+            .
     ```
 
 ## Run the Docker Container to Build L4T Image  
@@ -94,7 +95,7 @@ Start the Docker container with the command below and it will kick off an instal
 You will be prompted to follow the link and log into the nVidia developer's account which will then validate the install.  
 Note: The following example maps the build output directory to the directory where this Dockerfile is executed  
 
-`docker run -it --rm -v $PWD:/home/aesd/ --name yl4t yocto-tegra:spring21`
+`docker run -it --rm -v $PWD:/home/aesd/ --name yl4t aesd-final:spring21`
 
 <sub>**Hint:** You can remove the `--rm` flag from the above command to keep the container instance once it's complete and attach to it for your own modifications/build edits</sub>
 

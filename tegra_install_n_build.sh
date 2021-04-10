@@ -16,12 +16,18 @@ sdkmanager --cli install --staylogin true --product Jetson --version 4.5.1 \
     --targetimagefolder /home/aesd/nvidia/nvidia_sdk/ --sudopassword '\n'
 
 YL4T_SUCCESS="false"
-# git clone https://github.com/OE4T/meta-tegra.git
 git clone https://github.com/OE4T/tegra-demo-distro.git /home/aesd/tegra-demo-distro
 cd /home/aesd/tegra-demo-distro/ || exit 1
 git checkout ${BRANCH}
 git submodule update --init --recursive
 . ./setup-env --machine ${MACHINE} --distro ${DISTRO}
+
+# Add Project Layer
+cd /home/aesd/tegra-demo-distro/layers/ || exit 1
+git clone https://github.com/cu-ecen-5013/final-project-CalebProvost.git --branch yocto-layer meta-aesd-final
+cd /home/aesd/build/ || exit 1
+bitbake-layers add-layer /home/aesd/tegra-demo-distro/layers/meta-aesd-final
+
 bitbake ${BUILD_IMAGE} && export YL4T_SUCCESS="true"
 
 if [ "${YL4T_SUCCESS}" = "true" ]; then
