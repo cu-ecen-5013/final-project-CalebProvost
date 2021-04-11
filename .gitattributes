@@ -1,2 +1,0 @@
-sdkmanager-1.4.1.7402_docker.tar.gz filter=lfs diff=lfs merge=lfs -text
-sdkmanager_1.4.1-7402_amd64.deb filter=lfs diff=lfs merge=lfs -text
