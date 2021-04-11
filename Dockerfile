@@ -6,7 +6,7 @@ ARG MACHINE="jetson-nano-2gb-devkit"
 ARG BRANCH="c4ef10f44d92ac9f1e4725178ab0cefd9add8126"
 ARG DISTRO="tegrademo"
 ARG BUILD_IMAGE="demo-image-full"
-ARG NVIDIA_DEVNET_MIRROR="file:///home/aesd/sdk_downloads"
+ARG NVIDIA_DEVNET_MIRROR="file:///home/user/sdk_downloads"
 
 # Install build system's dependencies
 RUN apt-get update
@@ -108,8 +108,8 @@ RUN pip3 install -U pip \
     -U colcon-common-extensions
 
 # User management
-RUN adduser --disabled-password --gecos '' aesd
-RUN adduser aesd sudo
+RUN adduser --disabled-password --gecos '' user
+RUN adduser user sudo
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 # Docker Dependencies for nVidia SDK Install
@@ -129,12 +129,12 @@ RUN dpkg-reconfigure locales
 RUN locale-gen en_US.UTF-8
 ENV LANG en_us.UTF-8
 ENV LC_ALL en_US.UTF-8
-ENV NVIDIA_DEVNET_MIRROR "file:///home/aesd/sdk_downloads"
+ENV NVIDIA_DEVNET_MIRROR "file:///home/user/sdk_downloads"
 RUN update-locale
-COPY ./.bashrc /home/aesd/.bashrc
+COPY ./.bashrc /home/user/.bashrc
 RUN sysctl fs.inotify.max_user_watches=65536
-USER aesd
-WORKDIR /home/aesd
+USER user
+WORKDIR /home/user
 
 # Script to Begin the Yocto Build for Jetson Image
 COPY tegra_install_n_build.sh .
