@@ -94,7 +94,7 @@ Start the Docker container with the command below and it will kick off an instal
 You will be prompted to follow the link and log into the nVidia developer's account which will then validate the install.  
 Note: The following example maps the build output directory to the directory where this Dockerfile is executed  
 
-`docker run -it -v $PWD:/home/aesd/ --name dl4t aesd-final:latest`
+`docker run -it -v $PWD:/home/user/ --name dl4t aesd-final:latest`
 
 ## Flash the SD Card
 
