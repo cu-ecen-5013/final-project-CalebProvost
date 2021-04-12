@@ -6,14 +6,14 @@ CUR_DIR=$(pwd)
 [ -z "${BRANCH}" ] && export BRANCH="c4ef10f44d92ac9f1e4725178ab0cefd9add8126"
 [ -z "${DISTRO}" ] && export DISTRO="tegrademo"
 [ -z "${BUILD_IMAGE}" ] && export BUILD_IMAGE="demo-image-full"
-[ -z "${NVIDIA_DEVNET_MIRROR}" ] && export NVIDIA_DEVNET_MIRROR="file://${CUR_DIR}/sdk_downloads"
+[ -z "${NVIDIA_DEVNET_MIRROR}" ] && export NVIDIA_DEVNET_MIRROR="file:///home/user/sdk_downloads"
 
 # Installs the nVidia SDK
 sdkmanager --cli install --staylogin true --product Jetson --version 4.5.1 \
     --targetos Linux --host true --target P3448-0003 --flash skip \
     --additionalsdk TensorFlow --select "Jetson OS" --select "Jetson SDK Components" \
-    --license accept --datacollection disable --downloadfolder "${CUR_DIR}/sdk_downloads" \
-    --targetimagefolder "${CUR_DIR}/nvidia/nvidia_sdk/" --sudopassword '\n'
+    --license accept --datacollection disable --downloadfolder "/home/user/sdk_downloads" \
+    --targetimagefolder "/home/user/nvidia/nvidia_sdk/" --sudopassword '\n'
 
 # Clone L4T Yocto Base
 YL4T_SUCCESS="false"

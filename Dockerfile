@@ -107,6 +107,18 @@ RUN pip3 install -U pip \
     -U colcon-core \
     -U colcon-common-extensions
 
+# Docker Dependencies for nVidia SDK Install
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+    gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+RUN echo \
+    "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+    $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y docker.io
+
+# nVidia SDK
+RUN wget https://github.com/CalebProvost/dockter-l4t/raw/master/sdkmanager_1.4.1-7402_amd64.deb
+RUN apt-get install -y ./sdkmanager_1.4.1-7402_amd64.deb
+
 # User management
 RUN adduser --disabled-password --gecos '' user
 RUN adduser user sudo
@@ -124,19 +136,7 @@ RUN mkdir -p /home/user/build
 USER user
 WORKDIR /home/user/build
 
-# Docker Dependencies for nVidia SDK Install
-RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
-    gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-RUN echo \
-    "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
-    $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y docker.io
-
-# nVidia SDK
-RUN wget https://github.com/cu-ecen-5013/final-project-CalebProvost/raw/docker/sdkmanager_1.4.1-7402_amd64.deb /home/user/Downloads/
-RUN apt-get install -y /home/user/Downloads/sdkmanager_1.4.1-7402_amd64.deb
-
 # Script to Begin the Yocto Build for Jetson Image
-COPY tegra_install_n_build.sh /home/user/build
-CMD [ "bash", "-c", "./tegra_install_n_build.sh" ]
+COPY tegra_install_n_build.sh /home/user/build/
+ENTRYPOINT [ "/home/user/build/tegra_install_n_build.sh" ]
 # CMD [ "bash" ]
