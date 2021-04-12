@@ -112,6 +112,18 @@ RUN adduser --disabled-password --gecos '' user
 RUN adduser user sudo
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
+# Set environment
+RUN dpkg-reconfigure locales
+RUN locale-gen en_US.UTF-8
+ENV LANG en_us.UTF-8
+ENV LC_ALL en_US.UTF-8
+ENV NVIDIA_DEVNET_MIRROR "file:///home/user/sdk_downloads"
+RUN update-locale
+COPY ./.bashrc /home/user/.bashrc
+RUN mkdir -p /home/user/build
+USER user
+WORKDIR /home/user/build
+
 # Docker Dependencies for nVidia SDK Install
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
     gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
@@ -121,22 +133,10 @@ RUN echo \
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y docker.io
 
 # nVidia SDK
-RUN wget https://github.com/cu-ecen-5013/final-project-CalebProvost/raw/docker/sdkmanager_1.4.1-7402_amd64.deb
-RUN apt-get install -y ./sdkmanager_1.4.1-7402_amd64.deb
-
-# Set environment
-RUN dpkg-reconfigure locales
-RUN locale-gen en_US.UTF-8
-ENV LANG en_us.UTF-8
-ENV LC_ALL en_US.UTF-8
-ENV NVIDIA_DEVNET_MIRROR "file:///home/user/sdk_downloads"
-RUN update-locale
-COPY ./.bashrc /home/user/.bashrc
-RUN sysctl fs.inotify.max_user_watches=65536
-USER user
-WORKDIR /home/user
+RUN wget https://github.com/cu-ecen-5013/final-project-CalebProvost/raw/docker/sdkmanager_1.4.1-7402_amd64.deb /home/user/Downloads/
+RUN apt-get install -y /home/user/Downloads/sdkmanager_1.4.1-7402_amd64.deb
 
 # Script to Begin the Yocto Build for Jetson Image
-COPY tegra_install_n_build.sh .
+COPY tegra_install_n_build.sh /home/user/build
 CMD [ "bash", "-c", "./tegra_install_n_build.sh" ]
 # CMD [ "bash" ]
