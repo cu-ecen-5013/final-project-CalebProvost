@@ -36,12 +36,19 @@ if [ "${YL4T_SUCCESS}" = "true" ]; then
     cd "${CUR_DIR}/tegraflash" || echo "Could Not Enter SD Card Staging Directory"
     cp "${CUR_DIR}/tegra-demo-distro/build/tmp/deploy/images/${MACHINE}/${BUILD_IMAGE}-${MACHINE}.tegraflash.tar.gz" "${CUR_DIR}/tegraflash/"
     tar -xf "${CUR_DIR}/tegra-demo-distro/build/tmp/deploy/images/${MACHINE}/${BUILD_IMAGE}-${MACHINE}.tegraflash.tar.gz"
-    ./dosdcard.sh "${CUR_DIR}/${BUILD_IMAGE}-${MACHINE}.img"
+    [ -f "../${BUILD_IMAGE}-${MACHINE}.img" ] && rm -rf "../${BUILD_IMAGE}-${MACHINE}.img"
+    ./dosdcard.sh "../${BUILD_IMAGE}-${MACHINE}.img" && SDCARD_IMAGE="true"
 
-    echo "#############################################################################"
-    echo "Yocto has built the L4T image. You can find the deloyment files here: ${CUR_DIR}/tegra-demo-distro/build/tmp/deploy/images/${MACHINE}/"
-    echo "For your conveinence, we've prepped an SD Card image for you to flash here: ${CUR_DIR}/${BUILD_IMAGE}-${MACHINE}.img"
-    echo "#############################################################################"
+    echo "" && echo ""
+    echo "####################################################################################################"
+    echo "Yocto has finished building the OE4T image \"${BUILD_IMAGE}\" for the \"${MACHINE}\"."
+    echo "Deloyment files can be found here: ${CUR_DIR}/tegra-demo-distro/build/tmp/deploy/images/${MACHINE}/"
+    if [ "${SDCARD_IMAGE}" = "true" ]; then
+        echo ""
+        echo "SD Card image for flashing can be found here: ${CUR_DIR}/${BUILD_IMAGE}-${MACHINE}.img"
+    fi
+    echo "####################################################################################################"
+    echo ""
     exit 0
 
 else
