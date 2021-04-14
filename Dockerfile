@@ -133,9 +133,10 @@ ENV NVIDIA_DEVNET_MIRROR "file:///home/user/sdk_downloads"
 RUN update-locale
 COPY ./.bashrc /home/user/.bashrc
 RUN mkdir -p /home/user/build
-COPY ./tegra_install_n_build.sh /home/user/build/
 USER user
 WORKDIR /home/user/build
 
 # Script to Begin the Yocto Build for Jetson Image
-ENTRYPOINT [ "/home/user/build/tegra_install_n_build.sh" ]
+RUN wget https://raw.githubusercontent.com/cu-ecen-5013/final-project-CalebProvost/dl4t/tegra_install_n_build.sh /home/user/build/
+# ENTRYPOINT [ "/home/user/build/tegra_install_n_build.sh" ]
+CMD [ "bash", "-c", "/home/user/build/tegra_install_n_build.sh" ]
