@@ -34,4 +34,4 @@ do_install () {
     install -m 0755 ${S}/uartserver ${D}${bindir}/
 }
 
-FILES_${PN} += " ${bindir}/uartserver"
+FILES_${PN} += "${bindir}/uartserver"
