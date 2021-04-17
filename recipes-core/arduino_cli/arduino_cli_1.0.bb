@@ -7,7 +7,7 @@ SRC_URI = "git@github.com:cu-ecen-5013/final-project-arpit6232.git;protocol=ssh;
 
 PV = "1.0+git${SRCPV}"
 # set to reference a specific commit hash in arpit6232 repo
-SRCREV = "243ad93561bd8f631c50eb29449e8a5c5f6773a3"
+SRCREV = "8748ae39ff3528c660d3625b8472827745fbafc9"
 
 # This sets your staging directory based on WORKDIR, where WORKDIR is defined at 
 # https://www.yoctoproject.org/docs/latest/ref-manual/ref-manual.html#var-WORKDIR
@@ -23,6 +23,12 @@ do_compile () {
 
 FILES_${PN} += "${bindir}/arduino-cli"
 FILES_${PN} += "${ROOT_HOME}/cli.sh"
+FILES_${PN} += "${sysconfdir}/init.d/arduino_cli_start_stop.sh"
+
+inherit update-rc.d
+INITSCRIPT_PACKAGES = "${PN}"
+INITSCRIPT_NAME_${PN} = "arduino_cli_start_stop.sh"
+
 
 do_install () {
     install -d ${D}${bindir}
@@ -30,4 +36,7 @@ do_install () {
 
     install -d ${ROOT_HOME}
     install -m 0777 ${S}/cli.sh ${ROOT_HOME}/
+
+    install -d 0755 ${D}${sysconfdir}/init.d
+	install -m 0755 ${S}/arduino_cli_start_stop.sh ${D}${sysconfdir}/init.d
 }
