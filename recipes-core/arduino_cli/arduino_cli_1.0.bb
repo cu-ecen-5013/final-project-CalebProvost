@@ -21,15 +21,13 @@ do_compile () {
 	oe_runmake
 }
 
-FILES_${PN} += "${ROOT_HOME}/arduino-cli"
-FILES_${PN} += "${ROOT_HOME}/LICENSE.txt"
 FILES_${PN} += "${bindir}/arduino-cli"
+FILES_${PN} += "${ROOT_HOME}/cli.sh"
 
 do_install () {
     install -d ${D}${bindir}
     install -m 0777 ${S}/arduino-cli ${D}${bindir}/
 
     install -d ${ROOT_HOME}
-    install -m 0777 ${S}/arduino-cli ${ROOT_HOME}/
-    install -m 0777 ${S}/LICENSE.txt ${ROOT_HOME}/
+    install -m 0777 ${S}/cli.sh ${ROOT_HOME}/
 }
