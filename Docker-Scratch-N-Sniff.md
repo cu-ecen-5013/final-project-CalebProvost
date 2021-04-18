@@ -1,7 +1,7 @@
 # From Scratch  
 
-Its as easy as [building the docker image](#Build-the-Dockerized-Yocto-for-Jetson), [having docker build L4T](#Run-the-Docker-Container-to-Build-L4T-Image), and [flashing the SD Card](#Flash-the-SD-Card)!  
-<sub>With the caviot that **_maybe_** you'll need to [install docker](#Install-Docker) if you don't already have it</sub>  
+Its as easy as [pulling the docker container](#Pull-the-Docker-Container), [having docker build our project image](#Run-the-Docker-Container-to-Build-Our-Project-Image), and [flashing the SD Card](#Flash-the-SD-Card)!  
+<sub>With the caviot that **_maybe_** you'll need to [install docker](#Install-Docker) if you don't already have it [see here](Install-Docker)</sub>  
 
 
 ## Important Preamble
@@ -16,6 +16,29 @@ A clarification as provided by nVidia:
 > * Part Number 945-13541-0001-000 NOT including adapter and cable  
 
 We are targeting to build for the module, which means the default was set to `P3448-0003`.  
+
+## Pull the Docker Container
+
+Get the docker container with everything neccessary to build by executing `docker pull calebprovost/dockter-l4t:sdk_installed` (be prepared... its ~10G).  
+
+If you wish to adjust the environments and/or the docker container, you can find the source here: [CalebProvost/dockter-l4t](https://github.com/CalebProvost/dockter-l4t)  
+<sub>**Info:** Executing the `build.sh` outside of the Docker container will fail. It is a script which runs automatically by and inside the docker container itself.</sub>  
+
+## Run the Docker Container to Build Our Project Image  
+
+Run the following command to build our project image for the `jetson-nano-2gb-devkit` board with our custom program code in it.
+`docker run -it -v $PWD:/home/user/build --name dl4t calebprovost/dockter-l4t:sdk_installed bash -c ./build.sh`
+
+If you'd like to build the OE4T demo image without our layer and code, execute the container eithout the appended command like so:  
+`docker run -it -v $PWD:/home/user/build --rm calebprovost/dockter-l4t:sdk_installed`
+
+## Flash the SD Card
+
+The SD Card image is created using the L4T SD Card tools and placed in the root of this directory. It's default name will be "demo-image-full-jetson-nano-2gb-devkit.img" but will follow the following naming convention if the defaults were overwritten in the prior steps: `"${BUILD_IMAGE}-${MACHINE}.img"`  
+
+Use your flavor of SD Card flashing tool (like balenaEtcher for Windows or `dd` for linux) and flash the provided image onto an SD card and insert into the Jetson nano to start having fun.  
+
+Note: An SD Card sized ~16GB will be needed. We found that our image was 300MB too large and thus used a 32GB card instead.  
 
 
 ## Install Docker  
@@ -69,37 +92,3 @@ Most importantly, create a new group called docker and add your username to it. 
     sudo systemctl daemon-reload
     sudo systemctl restart docker
     ```
-
-## Build the Dockerized Yocto for Jetson
-
-<sub>**Info:** Executing the `tegra_install_n_build.sh` outside of the Docker container will fail. It is a script which runs automatically by and inside the docker container itself.</sub>  
-
-* Run the following to build the docker image with the default configuration:  
-`docker build -t aesd-final:latest .`  
-
-    If you'd like to override the default branch, machine, target distro, or other settings, you can do so by overwriting their values with the argument tag `--build-arg VAR=value`. Below is an example provided to demonstrate this. See the header inside `tegra_install_n_build.sh` for defaults and overwritable variables.  
-
-    ```shell
-    docker build -t aesd-final:latest \
-        --build-arg MACHINE=jetson-nano-2gb-devkit \
-        --build-arg BRANCH=master \
-        --build-arg BUILD_IMAGE=demo-image-full \
-        --build-arg DISTRO="tegrademo-mender build-tegrademo-mender" \
-        $(pwd)
-    ```
-
-## Run the Docker Container to Build L4T Image  
-
-Start the Docker container with the command below and it will kick off an installation of nVidia's SDK and build the L4T yocto image.  
-You will be prompted to follow the link and log into the nVidia developer's account which will then validate the install.  
-Note: The following example maps the build output directory to the directory where this Dockerfile is executed  
-
-`docker run -it -v $PWD:/home/user/build --name dl4t aesd-final:latest`
-
-## Flash the SD Card
-
-The SD Card image is created using the L4T SD Card tools and placed in the root of this directory. It's default name will be "demo-image-full-jetson-nano-2gb-devkit.img" but will follow the following naming convention if the defaults were overwritten in the prior steps: `"${BUILD_IMAGE}-${MACHINE}.img"`  
-
-Use your flavor of SD Card flashing tool (like balenaEtcher for Windows or `dd` for linux) and flash the provided image onto an SD card and insert into the Jetson nano to start having fun.  
-
-Note: An SD Card sized ~16GB will be needed. We found that our image was 300MB too large and thus used a 32GB card instead.  
