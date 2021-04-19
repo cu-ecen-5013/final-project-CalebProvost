@@ -30,7 +30,7 @@ do_install_append() {
     install -d ${D}${bindir}
     install -d ${D}/${systemd_unitdir}/system
     install -m 0755 ${S}/uartserver ${D}${bindir}/
-    install -m 0644 ${WORKDIR}/hello.service ${D}/${systemd_unitdir}/system
+    install -m 0644 ${S}/uartserver.service ${D}/${systemd_unitdir}/system
 }
 
 FILES_${PN} += "\
