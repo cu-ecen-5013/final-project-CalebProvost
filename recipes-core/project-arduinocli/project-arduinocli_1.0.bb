@@ -10,6 +10,16 @@ SRCREV = "d6969b288c7716d8c6851136d9a0d3d0ef333b6a"
 
 S = "${WORKDIR}/git"
 
+inherit systemd
+SYSTEMD_AUTO_ENABLE = "enable"
+SYSTEMD_SERVICE_\${PN} = "arduinocli.service"
+
+SRC_URI_append = " file://arduinocli.service "
+
+FILES_${PN} += "${systemd_unitdir}/system/arduinocli.service"
+FILES_${PN} += "${bindir}/arduino-cli"
+FILES_${PN} += "${bindir}/cli.sh"
+
 do_configure () {
 	:
 }
@@ -19,14 +29,15 @@ do_compile () {
 }
 
 do_install () {
+
     install -d ${D}${bindir}
     install -m 0777 ${S}/arduino-cli ${D}${bindir}/
 
     install -d ${D}${bindir}
     install -m 0777 ${S}/cli.sh ${D}${bindir}/
-}
 
-FILES_${PN} += "${bindir}/arduino-cli"
-FILES_${PN} += "/home/cli.sh"
+    install -d ${D}/${systemd_unitdir}/system
+    install -m 0644 ${WORKDIR}/arduinocli.service ${D}/${systemd_unitdir}/system
+}
 
 INSANE_SKIP_${PN} = "ldflags"
