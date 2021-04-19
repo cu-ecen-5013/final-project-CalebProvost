@@ -16,22 +16,24 @@ do_compile () {
 	oe_runmake
 }
 
-# TODO: Uncomment and adjust when init-scripts are finished
-# inherit update-rc.d
-# INITSCRIPT_PACKAGES = "${PN}"
-# INITSCRIPT_NAME_${PN} = "uartserver-start-stop"
-
-# TODO: Uncomment and adjust when init-scripts are finished
+# Preserve working install method
 # do_install () {
 #     install -d ${D}${bindir}
 #     install -m 0755 ${S}/uartserver ${D}${bindir}/
-#     install -d ${D}${sysconfdir}/init.d/
-#     install -m 0755 ${S}/uartserver-start-stop ${D}${sysconfdir}/init.d/
 # }
-# TODO: Remove for adjusted version above
-do_install () {
+
+inherit systemd
+SYSTEMD_AUTO_ENABLE = "enable"
+SYSTEMD_SERVICE_${PN} = "uartserver.service"
+
+do_install_append() {
     install -d ${D}${bindir}
+    install -d ${D}/${systemd_unitdir}/system
     install -m 0755 ${S}/uartserver ${D}${bindir}/
+    install -m 0644 ${WORKDIR}/hello.service ${D}/${systemd_unitdir}/system
 }
 
-FILES_${PN} += "${bindir}/uartserver"
+FILES_${PN} += "\
+	${bindir}/uartserver \
+	${systemd_unitdir}/system/uartserver.service \
+"
