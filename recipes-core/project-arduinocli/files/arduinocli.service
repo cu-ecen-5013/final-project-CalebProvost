@@ -3,7 +3,7 @@ Description=Arduino serial setup
 DefaultDependencies=no
 
 [Service]
-ExecStart=/bin/sh /usr/bin/cli.sh
+ExecStart=/bin/sh -c '/bin/sh /home/root/cli.sh'
 
 [Install]
 WantedBy=multi-user.target
