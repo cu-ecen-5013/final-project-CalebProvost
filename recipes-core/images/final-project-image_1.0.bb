@@ -21,5 +21,5 @@ CORE_IMAGE_BASE_INSTALL += "packagegroup-demo-x11tests"
 CORE_IMAGE_BASE_INSTALL += "${@bb.utils.contains('DISTRO_FEATURES', 'vulkan', 'packagegroup-demo-vulkantests', '', d)}"
 CORE_IMAGE_BASE_INSTALL += "libvisionworks-devso-symlink nvidia-docker cuda-libraries tegra-mmapi-samples"
 
-# CORE_IMAGE_BASE_INSTALL += "project-arduinocli"
+# CORE_IMAGE_BASE_INSTALL += "project-server project-arduinocli"
 IMAGE_INSTALL_append_tegra = " project-server project-arduinocli"
