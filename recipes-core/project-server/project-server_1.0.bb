@@ -26,7 +26,7 @@ inherit systemd
 SYSTEMD_AUTO_ENABLE = "enable"
 
 do_install() {
-    install -d ${D}${bindir} ${D}${systemd_system_unitdir}
+    install -d ${D}${bindir} ${D}${systemd_system_unitdir}/system/
     install -m 0755 ${S}/uartserver ${D}${bindir}/
     install -m 0644 ${S}/uartserver.service ${D}${systemd_unitdir}/system/
 }
