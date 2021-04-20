@@ -33,7 +33,7 @@ do_install() {
 
 FILES_${PN} += "\
     ${bindir}/uartserver \
-    ${systemd_unitdir}/uartserver.service \
+    ${systemd_unitdir}/system/uartserver.service \
     "
 
 SYSTEMD_SERVICE_${PN} = "uartserver.service"
