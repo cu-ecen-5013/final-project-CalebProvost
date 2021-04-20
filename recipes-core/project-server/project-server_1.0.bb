@@ -24,16 +24,16 @@ do_compile () {
 
 inherit systemd
 SYSTEMD_AUTO_ENABLE = "enable"
-SYSTEMD_SERVICE_${PN} = "uartserver.service"
 
-do_install_append() {
-    install -d ${D}${bindir}
-    install -d ${D}/${systemd_unitdir}/system
+do_install() {
+    install -d ${D}${bindir} ${D}${systemd_system_unitdir}/system/
     install -m 0755 ${S}/uartserver ${D}${bindir}/
-    install -m 0644 ${S}/uartserver.service ${D}/${systemd_unitdir}/system
+    install -m 0644 ${S}/uartserver.service ${D}${systemd_unitdir}/system/
 }
 
 FILES_${PN} += "\
-	${bindir}/uartserver \
-	${systemd_unitdir}/system/uartserver.service \
-"
+    ${bindir}/uartserver \
+    ${systemd_unitdir}/uartserver.service \
+    "
+
+SYSTEMD_SERVICE_${PN} = "uartserver.service"
